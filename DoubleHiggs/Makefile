@@ -17,8 +17,8 @@ endif
 
 SrcSuf = cc
 
-CXXFLAGS += $(ROOTCFLAGS) -Wno-write-strings -D_FILE_OFFSET_BITS=64 -DDROP_CGAL -I. -Iexternal -Iexternal/tcl
-SNOWMASS_LIBS = $(shell $(RC) --libs) -lEG $(SYSLIBS)
+CXXFLAGS += $(ROOTCFLAGS) -Wno-write-strings -D_FILE_OFFSET_BITS=64 -DDROP_CGAL -I. -I$(DELPHES_PATH) -I$(DELPHES_PATH)/external
+SNOWMASS_LIBS = $(shell $(RC) --libs) -lEG $(SYSLIBS)  -L$(DELPHES_PATH) -lDelphes
 
 ###
 
@@ -32,6 +32,9 @@ DISTTAR = $(DISTDIR).tar.gz
 all:
 
 
+lib/LjmetEventContent.$(ObjSuf): \
+	src/LjmetEventContent.cpp
+
 SnowmassApp$(ExeSuf): \
 	lib/SnowmassApp.$(ObjSuf)
 
@@ -42,7 +45,8 @@ EXECUTABLE =  \
 	SnowmassApp$(ExeSuf)
 
 EXECUTABLE_OBJ =  \
-	lib/SnowmassApp.$(ObjSuf)
+	lib/SnowmassApp.$(ObjSuf) \
+	lib/LjmetEventContent.$(ObjSuf)
 
 
 
@@ -52,8 +56,8 @@ EXECUTABLE_OBJ =  \
 all: $(EXECUTABLE)
 
 clean:
-	@rm -f core
-	@rm -rf tmp
+	@rm -f core $(EXECUTABLE)
+	@rm -rf tmp lib/*
 
 distclean: clean
 	@rm -f $(EXECUTABLE)
